@@ -13,12 +13,28 @@ app.use(bodyParser.json())
 // 支持编码表单的消息体
 app.use(bodyParser.urlencoded({extended:true}))
 
+// 用 express.static 把文件注册到对应的URL上
+app.use(
+    '/css/bootstrap.css',
+    express.static('node_modules/bootstrap/dist/css/bootstrap.css')
+)
+
+
+
+
 const  articles = [{title:'例子：'}]
 // 获取所有文章
 app.get('/articles',(req,res,next)=>{
     Article.all((err,articles)=>{
         if(err) return next(err)
-        res.send(articles)
+        res.format({
+            html:()=>{
+                res.render('articles.ejs',{articles:articles})
+            },
+            json:()=>{
+                res.send(articles)
+            }
+        })
     })
 })
 
